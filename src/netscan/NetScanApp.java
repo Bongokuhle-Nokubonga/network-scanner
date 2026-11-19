@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /** Command-line entry point. */
 public final class NetScanApp {
@@ -63,11 +62,13 @@ public final class NetScanApp {
             PortScanner scanner = new PortScanner(timeout, threads, banners);
 
             System.out.println("netscan - authorised use only. Scanning " + hosts.size() + " host(s) x " + portList.size() + " port(s)...");
-            AtomicInteger lastDecile = new AtomicInteger(-1);
+            int[] lastDecile = { 0 };
             PortScanner.ScanSummary result = scanner.scan(hosts, portList, pct -> {
-                int decile = pct / 10, prev = lastDecile.get();
-                if (decile > prev && lastDecile.compareAndSet(prev, decile)) {
-                    System.out.print("\r  progress: " + decile * 10 + "%   ");
+                synchronized (lastDecile) { // threads report out of order; only ever print upwards
+                    if (pct / 10 > lastDecile[0]) {
+                        lastDecile[0] = pct / 10;
+                        System.out.print("\r  progress: " + lastDecile[0] * 10 + "%   ");
+                    }
                 }
             });
             System.out.println();

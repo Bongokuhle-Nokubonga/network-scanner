@@ -9,6 +9,8 @@ that are risky to expose** (Telnet, SMB, RDP, open databases…). Results can be
 > **Ethical use:** only scan networks you own or have written permission to test. Unauthorised
 > scanning can break acceptable-use policies and laws (in South Africa, the Cybercrimes Act 19 of 2020).
 
+![A real scan of my own Windows PC: RPC and SMB found open, each with a security warning](docs/demo.png)
+
 ## Example
 
 Illustrative output for a small home or lab network:
