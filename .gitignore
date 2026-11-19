@@ -1,0 +1,7 @@
+out/
+*.class
+*.json
+*.csv
+.idea/
+.vscode/
+*.iml

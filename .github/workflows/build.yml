@@ -1,0 +1,28 @@
+name: Build and test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Compile and run tests (Linux)
+        if: runner.os == 'Linux'
+        run: bash build.sh
+      - name: Compile and run tests (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: .\build.ps1
+      - name: Smoke test - scan the runner itself
+        if: runner.os == 'Linux'
+        run: java -cp out netscan.NetScanApp 127.0.0.1 -p 1-1024 --json scan.json && cat scan.json
